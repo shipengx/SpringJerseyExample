@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+    <context:annotation-config/>
+	<context:component-scan base-package="com.shipeng.rest.web" />
+
+	<bean id="configFileList" class="java.util.LinkedList">
+		<constructor-arg>
+			<list>
+				<value>file:///opt/opinmind/conf/bidder-meta/bidder-meta.properties</value>
+				<value>file:///opt/opinmind/conf/credentials/passwords.properties</value>
+				<value>file:///opt/opinmind/conf/local.properties</value>
+				<value>file:///opt/opinmind/conf/common.properties</value>
+				<value>file:///opt/opinmind/conf/bidgen.nodes.properties</value>
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<bean id="applicationProperties"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations" ref="configFileList" />
+	</bean>
+
+
+	<!-- Flag for turning on/off "Google same device targeting" feature -->
+	<bean id="sameDeviceTargetingEnabled" class="java.lang.Boolean">
+		<constructor-arg>
+			<value>${bidder.google.same.device.targeting.enabled}</value>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="bidder-google-bid" class="com.shipeng.rest.web.BidRequestHandler" init-method="init">
+		<property name="sameDeviceTargetingEnabled" ref="sameDeviceTargetingEnabled" />
+	</bean>
+
+</beans>
